@@ -1,0 +1,93 @@
+package com.itheima.hibernate;
+
+import java.util.List;
+
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
+import org.junit.Test;
+
+import com.itheima.domain.Customer;
+import com.itheima.utils.HibernateUtils;
+
+public class HibernateTes3 {
+	
+//	使用hql完成查询所有的操作
+	@Test
+	public void test1() {
+		
+		Configuration config = new Configuration().configure();
+		
+//		建立sessionFactory
+		SessionFactory sessionFactory = config.buildSessionFactory();
+		
+//		开启session
+		Session session = sessionFactory.openSession();
+		
+//		开始事务
+		Transaction transaction = session.beginTransaction();
+		
+//		执行操作
+		Query query =  session.createQuery("from Customer");
+		
+		List<Customer> list = query.list();
+		System.out.println(list);
+		
+		
+		session.close();
+		
+		sessionFactory.close();
+	}
+	
+	//向表中插入100条数据
+	@Test
+	public void test2() {
+		
+		Session session = HibernateUtils.getSession();
+		Transaction transaction = session.beginTransaction();
+		
+		
+		for(int i =0 ; i <100 ; i++) {
+			Customer c = new Customer();
+			c.setId(i);
+			c.setName("张"+ i);
+			c.setSex("男");
+			c.setAddress("石家庄");
+			
+			session.save(c);
+		}
+		
+		transaction.commit();
+		session.close();
+		
+		
+	}
+	
+//	分页查询
+	@Test
+	public void test3() {
+		Session	session = HibernateUtils.getSession();
+		
+		Transaction transaction = session.beginTransaction();
+		Query query = session.createQuery("from Customer");
+		query.setFirstResult(10);
+	//查询结果回显条数
+		query.setMaxResults(10);
+		
+		List<Customer> list = query.list();
+		System.out.println(list);
+		
+		transaction.commit();
+		session.close();
+		
+		
+		
+		
+		
+		
+		
+		
+	}
+}	
